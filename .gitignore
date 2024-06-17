@@ -1,0 +1,8 @@
+.env
+.venv
+__pycache__
+Pipfile
+__myfunc
+*.mp3
+*.png
+commanddata.txt
