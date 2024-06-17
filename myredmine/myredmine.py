@@ -14,7 +14,7 @@ class myredmine:
             'X-Redmine-API-Key': api_key
         }
 
-    def get_project_id(self):
+    def get_project(self):
         url = f'{self.redmine_url}/projects.json'
         response = requests.get(url, headers=self.headers)
 
@@ -165,5 +165,5 @@ class myredmine:
 
 if __name__ == '__main__' :
     rd = myredmine('http://206.189.152.51', '3a1e29b83a8b19f32f2fb8a500bc54683130fbed')
-    tasks = rd.get_tasks(1)
-    print(tasks)
+    pj = rd.get_project()
+    print(pj)
