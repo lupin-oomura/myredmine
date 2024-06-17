@@ -98,14 +98,17 @@ class myredmine:
             print("ステータスコード:", response.status_code)
     
 
-    def get_members(self, project_id) :
+    def get_members_simple(self, project_id) :
         memberships_url = f"{self.redmine_url}/projects/{project_id}/memberships.json"
         response = requests.get(memberships_url, headers=self.headers)
 
         # レスポンスが成功したか確認します
         if response.status_code == 200:
             memberships = response.json()['memberships']
-            return memberships
+            mems = []
+            for x in memberships :
+                mems.append( {"id": x['user']['id'], "name": x['user']['name']} )
+            return mems
         else:
             print(f"エラーが発生しました: {response.status_code}")
 
@@ -182,3 +185,50 @@ if __name__ == '__main__' :
     rd = myredmine('http://206.189.152.51', '3a1e29b83a8b19f32f2fb8a500bc54683130fbed')
     pj = rd.get_project()
     print(pj)
+
+    mem = rd.get_members_simple(1)
+    print("-----------")
+    print(mem)
+    # for x in mem :
+    #     print(f"{x['user']['id']} - {x['user']['name']}")
+
+#     print(mem)
+
+
+# [
+#     {
+#         'id': 1, 
+#         'project': {
+#             'id': 1, 
+#             'name': 'ビジネス立ち上げフェーズ'
+#         }, 
+#         'user': {
+#             'id': 1, 
+#             'name': '真 大村'
+#         },
+#         'roles': [
+#             {
+#                 'id': 3, 
+#                 'name': 'Admin'
+#             }
+#         ]
+#     }, 
+#     {
+#         'id': 2, 
+#         'project': {
+#             'id': 1, 
+#             'name': 'ビジネス立ち上げフェーズ'
+#         }, 
+#         'user': {
+#             'id': 6, 
+#             'name': '登央  木下'
+#         }, 
+#         'roles': [
+#             {
+#                 'id': 3, 
+#                 'name': 'Admin'
+#             }
+#         ]
+#     }, 
+#     {
+#         'id': 3, 'project': {'id': 1, 'name': 'ビジネス立ち上げフェーズ'}, 'user': {'id': 5, 'name': '豊 根津'}, 'roles': [{'id': 3, 'name': 'Admin'}]}]
