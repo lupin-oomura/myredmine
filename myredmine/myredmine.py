@@ -97,6 +97,21 @@ class myredmine:
             print("タスクの取得に失敗しました。")
             print("ステータスコード:", response.status_code)
     
+
+    def get_members(self, project_id) :
+        memberships_url = f"{self.redmine_url}/projects/{project_id}/memberships.json"
+        response = requests.get(memberships_url, headers=self.headers)
+
+        # レスポンスが成功したか確認します
+        if response.status_code == 200:
+            memberships = response.json()['memberships']
+            return memberships
+        else:
+            print(f"エラーが発生しました: {response.status_code}")
+
+
+
+
     # def get_issue_details(self, issue_id):
     #     url = f'{self.redmine_url}/issues/{issue_id}.json'
     #     response = requests.get(url, headers=self.headers)
