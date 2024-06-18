@@ -81,7 +81,7 @@ class myredmine:
             print("ステータスコード:", response.status_code)
             print("レスポンス:", response.json())
 
-    def get_tasks(self, project_id:int, user_id:int=None, is_closed:bool=None):
+    def get_tickets(self, project_id:int, user_id:int=None, is_closed:bool=None):
         url = f'{self.redmine_url}/issues.json'
         params = {
             'project_id': project_id, 
@@ -258,7 +258,7 @@ if __name__ == '__main__' :
     print(mem)
 
     print("---tasks--------")
-    tasks = rd.get_tasks(1)
+    tasks = rd.get_tickets(1)
     print(tasks)
 
     print("---wiki--------")
