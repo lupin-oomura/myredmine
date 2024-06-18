@@ -102,7 +102,24 @@ class myredmine:
             print("タスクの取得に失敗しました。")
             print("ステータスコード:", response.status_code)
     
+    def get_tickets_simple(self, project_id:int, user_id:int=None, is_closed:bool=None):
+        tickets = self.get_tickets(project_id, user_id, is_closed)
+        simpletickets = []
 
+        for t in tickets :
+            d = {
+                "id": t['id'],
+                "tracker": t['tracker']['name'],
+                "status": t['status']['name'],
+                "is_closed": t['status']['is_closed'],
+                "subject": t['subject'],
+                "due_date": t['due_date'],
+                "assigned_to": t["assigned_to"]['id']
+            }
+            simpletickets.append(d)
+
+        return simpletickets
+    
         # [
         #     {
         #         'id': 6, 
@@ -309,8 +326,3 @@ if __name__ == '__main__' :
 #     {
 #         'id': 3, 'project': {'id': 1, 'name': 'ビジネス立ち上げフェーズ'}, 'user': {'id': 5, 'name': '豊 根津'}, 'roles': [{'id': 3, 'name': 'Admin'}]}]
 
-        #         'tracker': {'id': 2, 'name': 'Task'}, 
-        #         'status': {'id': 1, 'name': 'Before Start', 'is_closed': False}, 
-        #         'subject': 'test', 
-        #         'due_date': None, 
-        #         'assigned_to': {'id': 1, 'name': '真 大村'},
