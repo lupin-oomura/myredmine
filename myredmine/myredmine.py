@@ -81,7 +81,7 @@ class myredmine:
             print("ステータスコード:", response.status_code)
             print("レスポンス:", response.json())
 
-    def get_tasks(self, project_id):
+    def get_tasks(self, project_id:int, user_id:int=None, is_closed:bool=None):
         url = f'{self.redmine_url}/issues.json'
         params = {
             'project_id': project_id, 
@@ -92,11 +92,78 @@ class myredmine:
 
         if response.status_code == 200:
             issues = response.json()['issues']
+            if user_id is not None :
+                issues = [ x for x in issues if user_id == x['assigned_to']['id'] ]
+            if is_closed is not None :
+                issues = [ x for x in issues if is_closed == x['status']['is_closed'] ]
+
             return issues
         else:
             print("タスクの取得に失敗しました。")
             print("ステータスコード:", response.status_code)
     
+
+        # [
+        #     {
+        #         'id': 6, 
+        #         'project': {'id': 1, 'name': 'ビジネス立ち上げフェーズ'}, 
+        #         'tracker': {'id': 2, 'name': 'Task'}, 
+        #         'status': {'id': 1, 'name': 'Before Start', 'is_closed': False}, 
+        #         'priority': {'id': 1, 'name': 'normal'}, 
+        #         'author': {'id': 1, 'name': '真 大村'}, 
+        #         'subject': 'test', 'description': '', 
+        #         'start_date': '2024-06-14', 
+        #         'due_date': None, 
+        #         'done_ratio': 0, 
+        #         'is_private': False, 
+        #         'estimated_hours': None, 
+        #         'total_estimated_hours': None, 
+        #         'created_on': '2024-06-14T07:15:59Z', 
+        #         'updated_on': '2024-06-14T07:15:59Z', 
+        #         'assigned_to': {'id': 1, 'name': '真 大村'},
+        #         'closed_on': None
+        #     }, {
+        #         'id': 5, 
+        #         'project': {'id': 1, 'name': 'ビジネス立ち上げフェーズ'}, 
+        #     }
+        # ]
+
+
+
+    def get_news(self, project_id) :
+        news_url = f"{self.redmine_url}/projects/{project_id}/news.json"
+        response = requests.get(news_url, headers=self.headers)
+
+        # レスポンスが成功したか確認します
+        if response.status_code == 200:
+            news_data = response.json()['news']
+            return news_data
+        else:
+            print(f"エラーが発生しました: {response.status_code}")
+
+
+    def get_wiki(self, project_id, wiki_page_title:str="wiki") :
+        # wiki_url = f"{self.redmine_url}/projects/{project_id}/wiki/index.json"
+        # response = requests.get(wiki_url, headers=self.headers)
+        # if response.status_code == 200:
+        #     wiki_pages = response.json()['wiki_pages']
+        #     return wiki_pages            
+        # else:
+        #     print(f"エラーが発生しました: {response.status_code}")
+
+
+        wiki_page_url = f"{self.redmine_url}/projects/{project_id}/wiki/{wiki_page_title}.json"
+        response = requests.get(wiki_page_url, headers=self.headers)
+
+        if response.status_code == 200:
+            # JSONデータをパースします
+            wiki_page = response.json()['wiki_page']
+            return wiki_page
+        else:
+            print(f"エラーが発生しました: {response.status_code}")
+
+
+
 
     def get_members_simple(self, project_id) :
         memberships_url = f"{self.redmine_url}/projects/{project_id}/memberships.json"
@@ -187,11 +254,20 @@ if __name__ == '__main__' :
     print(pj)
 
     mem = rd.get_members_simple(1)
-    print("-----------")
+    print("---members--------")
     print(mem)
-    # for x in mem :
-    #     print(f"{x['user']['id']} - {x['user']['name']}")
 
+    print("---tasks--------")
+    tasks = rd.get_tasks(1)
+    print(tasks)
+
+    print("---wiki--------")
+    wiki = rd.get_wiki(1)
+    print(wiki)
+
+    print("---news--------")
+    news = rd.get_news(1)
+    print(news)
 #     print(mem)
 
 
@@ -232,3 +308,9 @@ if __name__ == '__main__' :
 #     }, 
 #     {
 #         'id': 3, 'project': {'id': 1, 'name': 'ビジネス立ち上げフェーズ'}, 'user': {'id': 5, 'name': '豊 根津'}, 'roles': [{'id': 3, 'name': 'Admin'}]}]
+
+        #         'tracker': {'id': 2, 'name': 'Task'}, 
+        #         'status': {'id': 1, 'name': 'Before Start', 'is_closed': False}, 
+        #         'subject': 'test', 
+        #         'due_date': None, 
+        #         'assigned_to': {'id': 1, 'name': '真 大村'},
