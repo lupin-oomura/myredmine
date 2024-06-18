@@ -93,7 +93,7 @@ class myredmine:
         if response.status_code == 200:
             issues = response.json()['issues']
             if user_id is not None :
-                issues = [ x for x in issues if user_id == x['assigned_to']['id'] ]
+                issues = [ x for x in issues if 'assigned_to' in x and user_id == x['assigned_to']['id'] ]
             if is_closed is not None :
                 issues = [ x for x in issues if is_closed == x['status']['is_closed'] ]
 
@@ -279,7 +279,7 @@ if __name__ == '__main__' :
     print(mem)
 
     print("---tasks--------")
-    tasks = rd.get_tickets_simple(1)
+    tasks = rd.get_tickets_simple(1, 1)
     print(tasks)
 
     print("---wiki--------")
