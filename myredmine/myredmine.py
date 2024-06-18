@@ -58,7 +58,7 @@ class myredmine:
             print("優先度の取得に失敗しました。")
             print("ステータスコード:", response.status_code)
 
-    def make_ticket(self, project_id, subject, description="", tracker_id=1, status_id=1, priority_id=1):
+    def make_ticket(self, project_id, subject, description="", tracker_id=1, status_id=1, priority_id=1, assigned_to_id=None):
         issue_data = {
             "issue": {
                 "project_id": project_id,
@@ -69,6 +69,9 @@ class myredmine:
                 "priority_id": priority_id,
             }
         }
+
+        if assigned_to_id is not None:
+            issue_data["issue"]["assigned_to_id"] = assigned_to_id
 
         url = f'{self.redmine_url}/issues.json'
         response = requests.post(url, headers=self.headers, data=json.dumps(issue_data))
