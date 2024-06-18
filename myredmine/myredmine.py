@@ -114,8 +114,12 @@ class myredmine:
                 "is_closed": t['status']['is_closed'],
                 "subject": t['subject'],
                 "due_date": t['due_date'],
-                "assigned_to": t["assigned_to"]['id']
             }
+            if 'assigned_to' in t :
+                d["assigned_to"] = t["assigned_to"]['id']
+            else :
+                d["assigned_to"] = None
+
             simpletickets.append(d)
 
         return simpletickets
@@ -275,7 +279,7 @@ if __name__ == '__main__' :
     print(mem)
 
     print("---tasks--------")
-    tasks = rd.get_tickets(1)
+    tasks = rd.get_tickets_simple(1)
     print(tasks)
 
     print("---wiki--------")
